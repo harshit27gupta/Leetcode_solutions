@@ -1,35 +1,18 @@
 class Solution {
-    private static final char[] ROTATE_SAME = {'0', '1', '8'};
-    private static final char[] ROTATE_DIFF = {'2', '5', '6', '9'};
-    private int count = 0;
-    private String high;
-    
     public int rotatedDigits(int N) {
-        this.high = String.valueOf(N);
-        
-        for (int len = 1; len <= high.length(); len++) 
-            dfs(0, new char[len], false);
-        
+        int count = 0;
+        for (int i = 1;i<=N;i++) if (getCount(i) > 0) count++;
         return count;
     }
     
-    private void dfs(int idx, char[] arr, boolean valid) {
-        if (idx == arr.length) {
-            if (!valid) return;
-            String res = new String(arr);
-            if (!(res.length() == high.length() && res.compareTo(high) > 0)) count++;
-            return;
+    public int getCount(int num){
+        int count  = 0;
+        while (num > 0){
+                int r = num % 10;
+                if (r == 3 || r == 4 || r == 7) return 0;
+                if (r == 2 || r == 5 || r == 6 || r == 9) count++;
+                num = num / 10;
         }
-        
-        for (char c : ROTATE_SAME) {
-            if (idx == 0 && c == '0') continue;
-            arr[idx] = c;
-            dfs(idx + 1, arr, valid);
-        }
-        
-        for (char c : ROTATE_DIFF) {
-            arr[idx] = c;
-            dfs(idx + 1, arr, true);
-        }
+        return count;
     }
 }
