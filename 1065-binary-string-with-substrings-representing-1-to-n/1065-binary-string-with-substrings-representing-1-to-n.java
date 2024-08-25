@@ -1,20 +1,19 @@
 class Solution {
-
-    static String binary(int n){    
-        StringBuilder s = new StringBuilder("");
-    while(n>0){
-            int r = n%2;
-            s.insert(0,String.valueOf(r));
-            n=n/2;
+    public boolean queryString(String s, int n) {
+      Set<Integer> poss=new HashSet<>();
+      for(int i=0;i<s.length();i++){
+        String st="";
+        for(int j=i;j<s.length();j++){
+            st+=s.charAt(j);
+            if(st.length()>31)
+            break;
+            if(Integer.parseInt(st,2)<=n && Integer.parseInt(st,2)>=1)
+            poss.add(Integer.parseInt(st,2));
         }
-        return s.toString();
-    }
-    public boolean queryString(String s, int n) {    
-        for(int i=1; i<=n; i++){
-            String str = binary(i);
-            int a = s.indexOf(str);
-            if(a==-1) return false;
-        }
-        return true;
+      }
+      if(poss.size()==n)
+      return true;   
+      return false;
+        
     }
 }
