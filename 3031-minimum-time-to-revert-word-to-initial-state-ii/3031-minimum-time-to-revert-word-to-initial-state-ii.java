@@ -18,8 +18,10 @@ class Solution {
         int n=word.length();
         int min=n/k+Math.min(n%k,1);
 int lps[]=kmp(word);
-int matched=lps[n-1];
-int rem=n-matched;
-return Math.min(rem/k+Math.min(rem%k,1),min);
+ int v = lps[n - 1]; 
+        while (v > 0 && (n - v) % k != 0) {
+            v = lps[v - 1]; 
+        }
+        return (n - v + k - 1) / k;
     }
 }
