@@ -3,7 +3,6 @@ class Solution {
         int m = nums1.length, n = nums2.length;
         int i = 0, j = 0;
         List<int[]> result = new ArrayList<>();
-
         while(i < m && j < n){
             if(nums1[i][0] == nums2[j][0]){
                 result.add(new int[]{nums1[i][0], nums1[i][1] + nums2[j][1]});
