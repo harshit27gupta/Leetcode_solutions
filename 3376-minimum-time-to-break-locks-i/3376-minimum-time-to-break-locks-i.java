@@ -1,34 +1,31 @@
 class Solution {
-    // Proper ceiling division
-    static int time(int x, int y) {
+    int[][] dp;
+    int n, k;
+
+    int ceilDiv(int x, int y) {
         return (x + y - 1) / y;
     }
 
-    static int ways(List<Integer> strength, int k, boolean[] visited, int base) {
-        boolean allVisited = true;
-        for (boolean v : visited) if (!v) allVisited = false;
-        if (allVisited) return 0;
+    int solve(List<Integer> strength, int mask, int base) {
+        if (mask == (1 << n) - 1) return 0;
+        if (dp[mask][base] != -1) return dp[mask][base];
 
-        int minTime = Integer.MAX_VALUE;
-
-        for (int i = 0; i < strength.size(); i++) {
-            if (!visited[i]) {
-                visited[i] = true;
-
-                int currTime = time(strength.get(i), base);
-                int remainingTime = ways(strength, k, visited, base + k);
-
-                minTime = Math.min(minTime, currTime + remainingTime);
-
-                visited[i] = false;
+        int res = Integer.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            if ((mask & (1 << i)) == 0) {
+                int cost = ceilDiv(strength.get(i), base);
+                res = Math.min(res, cost + solve(strength, mask | (1 << i), base + k));
             }
         }
 
-        return minTime;
+        return dp[mask][base] = res;
     }
 
     public int findMinimumTime(List<Integer> strength, int k) {
-        boolean[] visited = new boolean[strength.size()];
-        return ways(strength, k, visited, 1);
+        this.n = strength.size();
+        this.k = k;
+        dp = new int[1 << n][15]; 
+        for (int[] row : dp) Arrays.fill(row, -1);
+        return solve(strength, 0, 1);
     }
 }
