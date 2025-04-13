@@ -1,53 +1,61 @@
-public class Solution {
-    final int MOD = 1000000007;
-    int base;
-    int[] digits;
-    HashMap<String, Integer> memo;
+class Solution {
+    static final int MOD = 1_000_000_007;
+
     public int countNumbers(String l, String r, int b) {
-        base = b;
-        int fr = f(r);
-        int fl = l.equals("0") ? 0 : f(new java.math.BigInteger(l).subtract(java.math.BigInteger.ONE).toString());
-        return (fr - fl + MOD) % MOD;
+        return (countUpTo(r, b) - countUpTo(subtractOne(l), b) + MOD) % MOD;
     }
-    private int f(String x) {
-        digits = dec2base(new java.math.BigInteger(x), base);
-        memo = new HashMap<>();
-        return dp(0, -1, true, false);
-    }
-    private int[] dec2base(java.math.BigInteger num, int base) {
-        if (num.equals(java.math.BigInteger.ZERO)) return new int[]{0};
-        ArrayList<Integer> list = new ArrayList<>();
-        while (num.compareTo(java.math.BigInteger.ZERO) > 0) {
-            list.add(num.mod(java.math.BigInteger.valueOf(base)).intValue());
-            num = num.divide(java.math.BigInteger.valueOf(base));
-        }
-        Collections.reverse(list);
-        return list.stream().mapToInt(i -> i).toArray();
-    }
-    private int dp(int i, int last, boolean tight, boolean started) {
-        if (i == digits.length) return 1;
 
-        String key = i + "," + last + "," + tight + "," + started;
-        if (memo.containsKey(key)) return memo.get(key);
-
-        int up = tight ? digits[i] : base - 1;
-        int ways = 0;
-
-        for (int d = 0; d <= up; d++) {
-            boolean newTight = tight && (d == up);
-            if (!started) {
-                if (d == 0) {
-                    ways = (ways + dp(i + 1, -1, newTight, false)) % MOD;
-                } else {
-                    ways = (ways + dp(i + 1, d, newTight, true)) % MOD;
-                }
+    private String subtractOne(String num) {
+        StringBuilder sb = new StringBuilder(num);
+        int i = sb.length() - 1;
+        while (i >= 0) {
+            if (sb.charAt(i) > '0') {
+                sb.setCharAt(i, (char)(sb.charAt(i) - 1));
+                break;
             } else {
-                if (d < last) continue;
-                ways = (ways + dp(i + 1, d, newTight, true)) % MOD;
+                sb.setCharAt(i, '9');
+                i--;
             }
         }
+        if (sb.charAt(0) == '0') sb.deleteCharAt(0);
+        return sb.toString();
+    }
 
-        memo.put(key, ways);
-        return ways;
+    private int countUpTo(String num, int base) {
+        int[] digits = convertToBase(num, base);
+        Integer[][][][] dp = new Integer[digits.length + 1][base + 1][2][2];
+        return countDP(0, 0, true, true, digits, base, dp);
+    }
+
+    private int countDP(int pos, int lastDigit, boolean tight, boolean leadingZero, int[] digits, int base, Integer[][][][] dp) {
+        if (pos == digits.length) {
+            return leadingZero ? 0 : 1;
+        }
+        if (dp[pos][lastDigit][tight ? 1 : 0][leadingZero ? 1 : 0] != null) {
+            return dp[pos][lastDigit][tight ? 1 : 0][leadingZero ? 1 : 0];
+        }
+
+        int limit = tight ? digits[pos] : base - 1;
+        int res = 0;
+        for (int d = 0; d <= limit; d++) {
+            if (!leadingZero && d < lastDigit) continue;
+            boolean newTight = tight && (d == limit);
+            boolean newLeadingZero = leadingZero && (d == 0);
+            res = (res + countDP(pos + 1, newLeadingZero ? 0 : d, newTight, newLeadingZero, digits, base, dp)) % MOD;
+        }
+        return dp[pos][lastDigit][tight ? 1 : 0][leadingZero ? 1 : 0] = res;
+    }
+
+    private int[] convertToBase(String num, int base) {
+        java.math.BigInteger n = new java.math.BigInteger(num);
+        if (n.equals(java.math.BigInteger.ZERO)) return new int[]{0};
+        java.util.ArrayList<Integer> list = new java.util.ArrayList<>();
+        while (n.compareTo(java.math.BigInteger.ZERO) > 0) {
+            list.add(n.mod(java.math.BigInteger.valueOf(base)).intValue());
+            n = n.divide(java.math.BigInteger.valueOf(base));
+        }
+        int[] result = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) result[i] = list.get(list.size() - 1 - i);
+        return result;
     }
 }
