@@ -1,44 +1,43 @@
 class Solution {
-    public int numBusesToDestination(int[][] routes, int source, int target) {
-        if (source == target) return 0;
+public int numBusesToDestination(int[][] routes, int source, int target) {
+    if (source == target) return 0;
 
-        int n = routes.length;
-        Map<Integer, List<Integer>> stopToBuses = new HashMap<>();
-        for (int i = 0; i < n; i++) {
-            for (int stop : routes[i]) {
-                stopToBuses.computeIfAbsent(stop, x -> new ArrayList<>()).add(i);
-            }
+    int n = routes.length;
+    Map<Integer, List<Integer>> stopToBuses = new HashMap<>();
+    for (int i = 0; i < n; i++) {
+        for (int stop : routes[i]) {
+            stopToBuses.computeIfAbsent(stop, x -> new ArrayList<>()).add(i);
         }
+    }
 
-        Queue<Integer> queue = new LinkedList<>();
-        Set<Integer> visitedBuses = new HashSet<>();
-        Set<Integer> visitedStops = new HashSet<>();
-        int steps = 0;
+    Queue<Integer> busQueue = new LinkedList<>();
+    Set<Integer> visitedBuses = new HashSet<>();
+    Set<Integer> visitedStops = new HashSet<>();
+    for (int bus : stopToBuses.getOrDefault(source, new ArrayList<>())) {
+        busQueue.offer(bus);
+        visitedBuses.add(bus);
+    }
 
-        queue.offer(source);
-        visitedStops.add(source);
-
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            steps++;
-            for (int s = 0; s < size; s++) {
-                int stop = queue.poll();
-                List<Integer> buses = stopToBuses.getOrDefault(stop, new ArrayList<>());
-
-                for (int bus : buses) {
-                    if (visitedBuses.contains(bus)) continue;
-                    visitedBuses.add(bus);
-
-                    for (int nextStop : routes[bus]) {
-                        if (nextStop == target) return steps;
-                        if (visitedStops.add(nextStop)) {
-                            queue.offer(nextStop);
+    int steps = 1;
+    while (!busQueue.isEmpty()) {
+        int size = busQueue.size();
+        for (int i = 0; i < size; i++) {
+            int bus = busQueue.poll();
+            for (int stop : routes[bus]) {
+                if (stop == target) return steps;
+                if (visitedStops.add(stop)) {
+                    for (int nextBus : stopToBuses.getOrDefault(stop, new ArrayList<>())) {
+                        if (visitedBuses.add(nextBus)) {
+                            busQueue.offer(nextBus);
                         }
                     }
                 }
             }
         }
-
-        return -1;
+        steps++;
     }
+
+    return -1;
+}
+
 }
