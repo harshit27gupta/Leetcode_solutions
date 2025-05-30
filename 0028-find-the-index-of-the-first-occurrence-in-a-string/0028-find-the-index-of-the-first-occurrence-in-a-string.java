@@ -4,12 +4,12 @@ class Solution {
         int j=0,i=1;
         while(i<needle.length()){
             if(needle.charAt(i)==needle.charAt(j)){
-                lps[i++]=j+1;
+                lps[i++]=++j;
             }
             else if(j!=0)
             j=lps[j-1];
             else
-            lps[i++]=j;
+            lps[i++]=0;
         }
         return lps;
     }
@@ -22,15 +22,14 @@ class Solution {
             if(haystack.charAt(i)==needle.charAt(j)){
                 i++;
                 j++;
-                if(j==needle.length())
-                return i-needle.length();
-                continue;
             }
-            else if(j!=0)
-            j=lps[j-1];
-            else
-            j=0;
-            i++;
+             if(j==needle.length())
+                return i-needle.length();
+           if(i<haystack.length() && haystack.charAt(i)!=needle.charAt(j))
+           if(j!=0)
+           j=lps[j-1];
+           else
+           i++;
         }
         return -1;
     }
