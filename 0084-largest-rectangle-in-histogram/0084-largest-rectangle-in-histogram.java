@@ -1,36 +1,22 @@
 class Solution {
-   public static int largestRectangleArea(int[] height) {
-    if (height == null || height.length == 0) {
-        return 0;
-    }
-    int[] lessFromLeft = new int[height.length]; // idx of the first bar the left that is lower than current
-    int[] lessFromRight = new int[height.length]; // idx of the first bar the right that is lower than current
-    lessFromRight[height.length - 1] = height.length;
-    lessFromLeft[0] = -1;
-
-    for (int i = 1; i < height.length; i++) {
-        int p = i - 1;
-
-        while (p >= 0 && height[p] >= height[i]) {
-            p = lessFromLeft[p];
+    public int largestRectangleArea(int[] heights) {
+        Stack<Integer> st=new Stack<>();
+        int maxArea=0;
+        for(int i=0;i<heights.length;i++){
+            while(!st.isEmpty() && heights[st.peek()]>heights[i]){
+                int base=st.pop();
+                int previous_smaller_element=(st.isEmpty()?-1:st.peek());
+                int next_smaller_element=i;
+                maxArea=Math.max(maxArea,heights[base]*(next_smaller_element-previous_smaller_element-1));
+            }
+            st.push(i);
         }
-        lessFromLeft[i] = p;
-    }
-
-    for (int i = height.length - 2; i >= 0; i--) {
-        int p = i + 1;
-
-        while (p < height.length && height[p] >= height[i]) {
-            p = lessFromRight[p];
+        while(!st.isEmpty()){
+             int base=st.pop();
+                int previous_smaller_element=(st.isEmpty()?-1:st.peek());
+                int next_smaller_element=heights.length;
+                maxArea=Math.max(maxArea,heights[base]*(next_smaller_element-previous_smaller_element-1));
         }
-        lessFromRight[i] = p;
+        return maxArea;
     }
-
-    int maxArea = 0;
-    for (int i = 0; i < height.length; i++) {
-        maxArea = Math.max(maxArea, height[i] * (lessFromRight[i] - lessFromLeft[i] - 1));
-    }
-
-    return maxArea;
-}
 }
