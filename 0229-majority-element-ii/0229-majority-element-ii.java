@@ -1,48 +1,42 @@
 class Solution {
     public List<Integer> majorityElement(int[] nums) {
-        Integer majority1 = 0;
-        Integer majority2 = 0;
-        int count1 = 0;
-        int count2 = 0;
-
-        for (int num : nums) {
-            if (num == majority1) {
-                count1++;
-            } else if (num == majority2) {
-                count2++;
-            } else if (count1 == 0) {
-                majority1 = num;
-                count1++;
-            } else if (count2 == 0) {
-                majority2 = num;
-                count2++;
-            } else {
-                count1--;
-                count2--;
+        List<Integer> ans=new ArrayList<>();
+        int n=nums.length;
+        int ele1=0,ele2=0;
+        int cnt1=0,cnt2=0;
+        int i=0;
+        while(i<n){
+            if(cnt1==0 && nums[i]!=ele2){
+                ele1=nums[i];
+                cnt1=1;
             }
-        }
-
-        count1 = 0;
-        count2 = 0;
-
-        for (int num : nums) {
-            if (num == majority1) {
-                count1++;
-            } else if (num == majority2) {
-                count2++;
+            else if(cnt2==0 && nums[i]!=ele1){
+                ele2=nums[i];
+                cnt2=1;
             }
+            else if(nums[i]==ele1)
+            cnt1++;
+            else  if(nums[i]==ele2)
+            cnt2++;
+            else{
+                cnt1--;
+                cnt2--;
+            }
+            i++;
         }
-
-        List<Integer> res = new ArrayList<>();
-        int n = nums.length;
-
-        if (count1 > n / 3) {
-            res.add(majority1);
+        cnt1=0;
+        cnt2=0;
+        i=0;
+        for(i=0;i<n;i++){
+            if(nums[i]==ele1)
+            cnt1++;
+            else if(nums[i]==ele2)
+            cnt2++;
         }
-        if (count2 > n / 3) {
-            res.add(majority2);
-        }
-
-        return res;        
+        if(cnt1>n/3)
+        ans.add(ele1);
+        if(cnt2>n/3)
+        ans.add(ele2);
+        return ans;
     }
 }
