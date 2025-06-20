@@ -1,25 +1,34 @@
 class Solution {
     public int[] maxSlidingWindow(int[] nums, int k) {
-        List<Integer> res = new ArrayList<>();
-        Deque<Integer> deque = new LinkedList<>();
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int n = nums.length;
+        int[] result = new int[n - k + 1];
 
-        for (int idx = 0; idx < nums.length; idx++) {
-            int num = nums[idx];
+        // Initial window
+        for (int i = 0; i < k; i++) {
+            queue.offer(nums[i]);
+            map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
+        }
+        result[0] = queue.peek();
 
-            while (!deque.isEmpty() && deque.getLast() < num) {
-                deque.pollLast();
+        // Slide the window
+        for (int i = k; i < n; i++) {
+            int out = nums[i - k];
+            map.put(out, map.get(out) - 1); // Lazy deletion
+
+            int in = nums[i];
+            queue.offer(in);
+            map.put(in, map.getOrDefault(in, 0) + 1);
+
+            // Clean up invalid max elements
+            while (map.get(queue.peek()) == 0) {
+                queue.poll();
             }
-            deque.addLast(num);
 
-            if (idx >= k && nums[idx - k] == deque.getFirst()) {
-                deque.pollFirst();
-            }
-
-            if (idx >= k - 1) {
-                res.add(deque.getFirst());
-            }
+            result[i - k + 1] = queue.peek();
         }
 
-        return res.stream().mapToInt(i -> i).toArray();        
+        return result;
     }
 }
