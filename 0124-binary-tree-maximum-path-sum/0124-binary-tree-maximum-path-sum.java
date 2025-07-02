@@ -14,25 +14,16 @@
  * }
  */
 class Solution {
-    int maxPathSum = Integer.MIN_VALUE;
-
+    private int max_Sum = Integer.MIN_VALUE;
     public int maxPathSum(TreeNode root) {
-        calculateMaxPathSum(root);
-        return maxPathSum;
+        dfs(root);
+        return max_Sum;
     }
-
-    private int calculateMaxPathSum(TreeNode node) {
-        if (node == null) {
-            return 0;
-        }
-
-        int leftMax = Math.max(0, calculateMaxPathSum(node.left));
-        int rightMax = Math.max(0, calculateMaxPathSum(node.right));
-
-        int currentPathSum = node.val + leftMax + rightMax;
-
-        maxPathSum = Math.max(maxPathSum, currentPathSum);
-
-        return node.val + Math.max(leftMax, rightMax);
+    private int dfs(TreeNode node) {
+        if (node == null) return 0;
+        int left = Math.max(0, dfs(node.left));   
+        int right = Math.max(0, dfs(node.right));
+        max_Sum = Math.max(max_Sum, left + right + node.val);
+        return node.val + Math.max(left, right);
     }
 }
