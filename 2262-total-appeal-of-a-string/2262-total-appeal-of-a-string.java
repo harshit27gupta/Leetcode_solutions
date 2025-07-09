@@ -1,18 +1,24 @@
 class Solution {
-    public long appealSum(String s) {
-        int n = s.length();
-        int[] last = new int[26];
-        Arrays.fill(last, -1);
-        long totalAppeal = 0;
-        long currentAppeal = 0;
-
-        for (int i = 0; i < n; i++) {
-            int ch = s.charAt(i) - 'a';
-            currentAppeal += (i - last[ch]);
-            totalAppeal += currentAppeal;
-            last[ch] = i;
+    static long ways(char ch,String s){
+        long cnt=0;
+        long ans=0;
+        for(int i=0;i<s.length();i++){
+            if(s.charAt(i)==ch){
+                ans+=(cnt*(cnt+1))/2;
+                cnt=0;
+            }
+            else
+            cnt++;
         }
+        ans+=(cnt*(cnt+1))/2;
+        long k=s.length();
+        return (k*(k+1))/2-ans;
 
-        return totalAppeal;
+    }
+    public long appealSum(String s) {
+        long ans=0;
+        for(int i=0;i<26;i++)
+        ans+=ways((char)(i+97),s);
+        return ans;
     }
 }
