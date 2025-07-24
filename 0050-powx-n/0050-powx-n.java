@@ -1,14 +1,19 @@
 class Solution {
     public double myPow(double x, int n) {
-        if(n<0){
-            n=-n;
-            x=1/x;
+        double res = 1.0;
+        long N = n; 
+        if (N < 0) {
+            x = 1 / x;
+            N = -N;
         }
-        if(n==0)
-        return 1D;
-       if(n%2==0)
-       return myPow(x*x,n/2);
-       else
-       return x*myPow(x*x,n/2);
+
+        while (N > 0) {
+            if ((N & 1) == 1)
+                res *= x;
+            x *= x;
+            N >>= 1;
+        }
+
+        return res;
     }
 }
